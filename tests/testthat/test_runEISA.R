@@ -134,9 +134,10 @@ test_that("runEISA() gives expected results", {
                 test.sig = res2$tab.ExIn$FDR < 0.01) # close to 1/nsig -> one false positive
 
     # no false positives or false negatives (except for selsig2 genes in t1)
-    nmissed1 <- t1["TRUE", "TRUE", "FALSE"] # expect to miss some genes with sample-specific effects
+    nmissed1 <- t1["FALSE", "TRUE", "FALSE"] # these are now missed after updated df calculation in limma (https://code.bioconductor.org/browse/limma/commit/e8ff47777e7c25d6dcb9582d9fcb8f9c4fed9da1)
+    nmissed2 <- t1["TRUE", "TRUE", "FALSE"]  # expect to miss some genes with sample-specific effects
     expect_identical(as.vector(t1),
-                     c(ngenes - nsig, 0L, 0L, nmissed1, 0L, 0L, nsig - nsig2, nsig2 - nmissed1))
+                     c(ngenes - nsig, 0L, nmissed1, nmissed2, 0L, 0L, nsig - nsig2 - nmissed1, nsig2 - nmissed2))
     expect_identical(as.vector(t2),
                      c(ngenes - nsig, 0L, 0L, 0L, 0L, 0L, nsig - nsig2, nsig2))
 })
